@@ -1,8 +1,3 @@
-DELETE THIS
-LAST EDITTING CONTINUE AND DEATH
-STATS2
-
-
 @echo off
 Title Command-Line Game
 :top (
@@ -37,8 +32,15 @@ set /a "health=100"
 set /a "strength=1"
 set /a "moneydollars=25"
 set /a "moneycents=00"
-echo HP=%health% - ST=%strength% - $$=%moneydollars%.%moneycents% - FIGHTS=%fightnum%"
+set /a "wins=0"
+set /a "losses=0"
+echo HP=%health% - ST=%strength% - $$=%moneydollars%.%moneycents% - FIGHTS=%fightnum% - WINS=%wins% - LOSS-%losses%
 goto start
+
+:stats2 (	
+	echo HP=%health% - ST=%strength% - $$=%moneydollars%.%moneycents% - FIGHTS=%fightnum% - WINS=%wins% - LOSS-%losses%
+	goto start
+)
 
 :setup (
 goto stats
@@ -52,6 +54,8 @@ set /p "input=->"
 if /i %input%==fight goto fight%fightnum%
 if /i %input%==explore goto explore
 if /i %input%==fight set /a "fightnum=%fightnum%+1"
+if %moneycents% GEQ 100 set /a "moneydollars=(%moneydollars%+1)"
+if %moneycents% GEQ 100 set /a "moneycents=(%moneycents%-100)"
 )
 
 :fight0 (
@@ -127,12 +131,19 @@ goto death
 )
 
 :continue (
+set /a "didLose=1"
 set /a "losses=(%losses%+1)"
+if %didLose%==1 set /a "health=100"
+if %didLose%==1 set /a "didLose=0"
 goto stats2
 )
 
 :win (
 echo YOU WIN
+set /a "didWin=1"
 set /a "wins=(%wins%+1)"
-goto stats
+if %didWin%==1 set /a "moneydollars=moneydollars+10"
+if %didWin%==1 set /a "moneycents=moneycents+25"
+if %didWin%==1 set /a "didWin=0"
+goto stats2
 )
