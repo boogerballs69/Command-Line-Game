@@ -1,3 +1,8 @@
+DELETE THIS
+LAST EDITTING CONTINUE AND DEATH
+STATS2
+
+
 @echo off
 Title Command-Line Game
 :top (
@@ -40,16 +45,18 @@ goto stats
 )
 
 :start (
+set /a "enemyhp=100+(%fightnum%*2)"
 echo - 
 echo Fight or explore?
 set /p "input=->"
 if /i %input%==fight goto fight%fightnum%
 if /i %input%==explore goto explore
+if /i %input%==fight set /a "fightnum=%fightnum%+1"
 )
 
 :fight0 (
-set /a "fightnum=%fightnum%+1"
-set /a "enemyhp=99+(%fightnum%*2)"
+if %health% LEQ 0 goto death
+if %enemyhp% LEQ 0 goto win
 echo F  I  G  H  T
 echo Your HP: %health%. Enemy HP: %enemyhp%
 echo Strike, Defend, or Run?
@@ -66,12 +73,13 @@ goto fight0
 set /a "critchance=%random%"
 if %critchance% LSS 16384 set /a "crit=0"
 if %critchance% GTR 16384 set /a "crit=1"
+goto strike
 )
 
 :hitrandom (
 set /a "hitchance=%random%"
-if %hitchance% LSS 16384 set /a "hit=0"
-if %hitchance% GTR 16384 set /a "hit=1"
+if %hitchance% LSS 10384 set /a "hit=0"
+if %hitchance% GTR 10384 set /a "hit=1"
 goto strike1
 )
 
@@ -84,14 +92,47 @@ goto hitrandom
 
 :strike1 (
 if %hit%==0 echo Miss
+if %hit%==0 goto strike2
 if %hit%==1 echo Hit
-if %hit%==1 goto strik2
+if %hit%==1 goto strike2
 )
 
 :strike2 (
-if %hit%==1 set /a "%enemyhp%=%enemyhp%-(5+((%crit%*2))
+if %hit%==1 set /a "enemyhp=(%enemyhp%-5)"
+if %hit%==1 if %crit%==1 set /a "enemyhp=(%enemyhp%-5)
+if %hit%==1 goto hitecho
 if %hit%==0 set /a "health=%health%-3"
-echo -3 HP
-echo  HP: %health%
-pause
+if %hit%==0 goto missecho
+)
+
+:hitecho (
+echo Enemy HP: %enemyhp%
+goto fight0
+)
+
+:missecho (
+echo HP: %health%
+goto fight0
+)
+
+:death (
+echo YOU DIED
+echo Continue?
+echo Yes or no
+set /p "input=->"
+if /i %input%==yes goto continue
+if /i %input%==no goto dontcontinue
+echo invalid input
+goto death
+)
+
+:continue (
+set /a "losses=(%losses%+1)"
+goto stats2
+)
+
+:win (
+echo YOU WIN
+set /a "wins=(%wins%+1)"
+goto stats
 )
