@@ -54,7 +54,7 @@ echo -
 echo Fight or explore?
 set /p "input=->"
 if /i %input%==fight goto fight0
-if /i %input%==fight if %fightnum%==10 goto bossfight0
+if /i %input%==fight if %fightnum%==10 goto bossfightSetup
 if /i %input%==explore goto explore
 if %moneycents% GEQ 100 set /a "moneydollars=(%moneydollars%+1)"
 if %moneycents% GEQ 100 set /a "moneycents=(%moneycents%-100)"
@@ -150,6 +150,16 @@ if %didWin%==1 set /a "didWin=0"
 goto stats2
 )
 
+:bossfightSetup (
+set /a "bossHP=500"
+set /a "health=100"
+)
+
 :bossfight0 (
+echo B O S S   F I G H T !
+echo HP: %health% - BOSS HP: %bossHP%
+if %health% LEQ 0 goto death
+if %enemyhp% LEQ 0 goto win
+
 
 )
