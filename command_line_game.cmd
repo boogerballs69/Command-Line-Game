@@ -29,7 +29,7 @@ goto %input%
 :stats (
 set /a "fightnum=0"
 set /a "health=100"
-set /a "strength=1"
+set /a "strength=5"
 set /a "moneydollars=25"
 set /a "moneycents=00"
 set /a "wins=0"
@@ -38,6 +38,7 @@ echo HP=%health% - ST=%strength% - $$=%moneydollars%.%moneycents% - FIGHTS=%figh
 goto start
 
 :stats2 (	
+	set /a "fightnum=%fightnum%+1"
 	echo HP=%health% - ST=%strength% - $$=%moneydollars%.%moneycents% - FIGHTS=%fightnum% - WINS=%wins% - LOSS-%losses%
 	goto start
 )
@@ -47,13 +48,14 @@ goto stats
 )
 
 :start (
+set /a "damage=%strength%"
 set /a "enemyhp=100+(%fightnum%*2)"
 echo - 
 echo Fight or explore?
 set /p "input=->"
-if /i %input%==fight goto fight%fightnum%
+if /i %input%==fight goto fight0
+if /i %input%==fight if %fightnum%==10 goto bossfight0
 if /i %input%==explore goto explore
-if /i %input%==fight set /a "fightnum=%fightnum%+1"
 if %moneycents% GEQ 100 set /a "moneydollars=(%moneydollars%+1)"
 if %moneycents% GEQ 100 set /a "moneycents=(%moneycents%-100)"
 )
@@ -69,7 +71,6 @@ if /i %input%==strike goto strikerandom
 if /i %input%==defend goto defend
 if /i %input%==run goto run
 echo invalid input
-set /a "fightnum=%fightnum%-1"
 goto fight0
 )
 
@@ -87,6 +88,7 @@ if %hitchance% GTR 10384 set /a "hit=1"
 goto strike1
 )
 
+
 :strike (
 echo You chose "%input%"
 if %crit%==0 echo Normal hit
@@ -102,8 +104,8 @@ if %hit%==1 goto strike2
 )
 
 :strike2 (
-if %hit%==1 set /a "enemyhp=(%enemyhp%-5)"
-if %hit%==1 if %crit%==1 set /a "enemyhp=(%enemyhp%-5)
+if %hit%==1 set /a "enemyhp=(%enemyhp%-%damage%)"
+if %hit%==1 if %crit%==1 set /a "enemyhp=(%enemyhp%-(%damage%/2))
 if %hit%==1 goto hitecho
 if %hit%==0 set /a "health=%health%-3"
 if %hit%==0 goto missecho
@@ -146,4 +148,8 @@ if %didWin%==1 set /a "moneydollars=moneydollars+10"
 if %didWin%==1 set /a "moneycents=moneycents+25"
 if %didWin%==1 set /a "didWin=0"
 goto stats2
+)
+
+:bossfight0 (
+
 )
